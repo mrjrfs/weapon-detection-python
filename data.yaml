@@ -1,0 +1,5 @@
+train: D:\4TIE_JosepRonaldoFrancisSiregar_CV\Dataset\archive (1)\guns-knives-yolo\guns-knives-yolo/train/images
+val: D:\4TIE_JosepRonaldoFrancisSiregar_CV\Dataset\archive (1)\guns-knives-yolo\guns-knives-yolo/valid/images
+
+nc: 2
+names: ["knife", "pistol"]
