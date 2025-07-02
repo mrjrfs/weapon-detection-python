@@ -1,5 +1,5 @@
-train: D:/4TIE_JosepRonaldoFrancisSiregar_CV/Dataset/guns-knives-yolo/train/images
-val: D:/4TIE_JosepRonaldoFrancisSiregar_CV/Dataset/guns-knives-yolo/valid/images
+train: D:/JRFS/Self/Project/computer-vision/train/images
+val: D:/JRFS/Self/Project/computer-vision/valid/images
 
 nc: 2
 names: ["knife", "pistol"]
