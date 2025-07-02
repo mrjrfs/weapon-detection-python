@@ -14,7 +14,10 @@ import torch.nn.modules.upsampling as upsampling_modules
 import ultralytics.nn.modules.head as ultralytics_head
 
 import os
-from flask import Flask, request, jsonify, Response, render_template_string
+# from flask import Flask, request, jsonify, Response, 
+from flask import Flask, request, jsonify, Response, render_template_string, send_from_directory, send_file
+
+from flask_cors import CORS, cross_origin
 import numpy as np
 import io
 import uuid
@@ -55,6 +58,8 @@ gun_labels = ["pistol", "gun", "revolver"]
 knife_labels = ["knife", "blade", "dagger"]
 
 app = Flask(__name__)
+CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 UPLOAD_FOLDER = 'uploads' 
 RESULTS_FOLDER = 'detect/results' 
@@ -105,8 +110,22 @@ def _draw_detections_and_counts_on_frame(
 
     return frame_to_annotate
 
+@app.route("/image/<filename>")
+def get_image(filename):
+    path = f"detect/results/images/{filename}"
+    return send_file(path, mimetype="image/png")
+
+@app.route("/video/<filename>")
+def get_video(filename):
+    return send_from_directory(
+        directory=os.path.join(os.getcwd(), RESULTS_FOLDER, 'videos'),
+        path=filename,
+        mimetype="video/mp4"
+    )
+
 @app.route('/detect/image', methods=['POST'])
 def detect_image_endpoint():
+    print(request.files)
     if 'image' not in request.files:
         return jsonify({"error": "No image file provided"}), 400
 
@@ -179,7 +198,7 @@ def detect_image_endpoint():
             "total_weapons": weapon_count,
             "knives_detected": knives_count,
             "guns_detected": guns_count,
-            "annotated_file_path": image_save_path,
+            "unique_filename": unique_filename,
             "detections": individual_detections_data 
         }
 
@@ -283,7 +302,7 @@ def detect_video_endpoint():
             "total_knives_detected_in_video": video_knives_total_count,
             "total_guns_detected_in_video": video_guns_total_count,
             "total_weapons_detected_in_video": video_weapons_total_count,
-            "annotated_file_path": output_video_path,
+            "unique_filename": output_video_filename,
         }
         return jsonify(response_data), 200
 
